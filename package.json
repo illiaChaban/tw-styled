@@ -1,0 +1,21 @@
+{
+  "name": "tw-styled",
+  "version": "0.0.1",
+  "description": "tailwind styled utility",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tailwind",
+    "styled",
+    "tw",
+    "styled-components",
+    "solidjs"
+  ],
+  "author": "illia.chaban.8@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "solid-js": "^1.8.17"
+  }
+}
