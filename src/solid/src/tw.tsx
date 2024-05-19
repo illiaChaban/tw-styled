@@ -1,4 +1,4 @@
-import { splitProps } from "solid-js";
+import { createMemo, mergeProps, splitProps } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import { Dynamic } from "solid-js/web";
 // import { twMerge } from 'tailwind-merge'
@@ -20,8 +20,6 @@ import { Dynamic } from "solid-js/web";
         "tw\\(.*?\\)(?:<.*?>)?`([^`]*)`" // tw(Component)<xxx>`...`
     ]
  */
-
-type CssMergeFn = (maybeClasses: (string | Falsy)[]) => string;
 
 export const createTw = (cssMergeFunction: CssMergeFn = simpleJoinClasses) =>
   ((
@@ -50,7 +48,7 @@ export const createTw = (cssMergeFunction: CssMergeFn = simpleJoinClasses) =>
           : preprocessArg(args[i]),
       ]);
 
-      return (props: any) => {
+      const Styled: StyledComponent<any> = (props) => {
         const [, p2] = splitProps(props, ["class", "as"]);
 
         const final = () =>
@@ -60,10 +58,30 @@ export const createTw = (cssMergeFunction: CssMergeFn = simpleJoinClasses) =>
             )
           );
 
+        const component = () => {
+          // preserve styles of the previous styled component
+          if (props.as && !isStyledComponent(Component)) return props.as;
+          return Component;
+        };
+        const otherProps = () => {
+          const Component = component();
+          if (typeof Component === "function") {
+            if (!isStyledComponent(Component)) return p2;
+            return mergeProps(p2, { as: props.as });
+          }
+          // omit propagating props to html elements that start with '$'
+          const propagatedKeys = Object.keys(p2).filter(
+            (k) => !k.startsWith("$")
+          );
+          return pick(p2, propagatedKeys);
+        };
+
         return (
-          <Dynamic component={props.as ?? Component} class={final()} {...p2} />
+          <Dynamic component={component()} class={final()} {...otherProps()} />
         );
       };
+      Styled._tag = "tw-styled";
+      return Styled;
     };
   }) as Tw;
 
@@ -80,6 +98,8 @@ const preprocessArg = (
         const v = arg(props);
         return v && templateToOneLine(v);
       }
+    : !!arg === false
+    ? ""
     : (() => {
         throw `Unsupported type: ${typeof arg}`;
       })();
@@ -102,9 +122,18 @@ const templateToOneLine = (templateStr: string): string => {
   );
 };
 
+const pick = <R extends Record<string, unknown>, P extends keyof R>(
+  obj: R,
+  keys: P[]
+): { [Key in P]: R[Key] } => {
+  const picked = {} as any;
+  keys.forEach((k) => (picked[k] = obj[k]));
+  return picked;
+};
+
 type Falsy = false | null | undefined | 0 | "";
 
-type TagArg<P> = string | ((props: P) => string | Falsy);
+type TagArg<P> = string | Falsy | ((props: P) => string | Falsy);
 
 type InternalProps = {
   as?: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element);
@@ -113,11 +142,22 @@ type InternalProps = {
 type TagFn<BaseProps extends {}> = <ExtraProps extends {} = {}>(
   classes: TemplateStringsArray,
   ...args: TagArg<ExtraProps>[]
-) => (
-  // TODO: support conditional props based on "as" internal prop.
-  // i.e. "as" component function accepts certtain props that become "BaseProps"
-  props: BaseProps & ExtraProps & InternalProps
-) => JSX.Element;
+) => StyledComponent<BaseProps, ExtraProps>;
+
+type StyledComponent<BaseProps extends {}, ExtraProps extends {} = {}> = {
+  (
+    // TODO: support conditional props based on "as" internal prop.
+    // i.e. "as" component function accepts certtain props that become "BaseProps"
+    props: BaseProps & ExtraProps & InternalProps
+  ): JSX.Element;
+  _tag: "tw-styled";
+};
+
+const isStyledComponent = <T extends {}>(
+  Component: string | ((p: T) => JSX.Element)
+): Component is StyledComponent<T> => {
+  return typeof Component === "function" && "_tag" in Component;
+};
 
 type Tw = {
   <K extends keyof JSX.IntrinsicElements>(component: K): TagFn<
@@ -130,6 +170,8 @@ type Tw = {
     ...args: (string | number | false | null | undefined)[]
   ): string;
 };
+
+type CssMergeFn = (maybeClasses: (string | Falsy)[]) => string;
 
 const simpleJoinClasses: CssMergeFn = (classes) =>
   classes.filter(Boolean).join(" ");
