@@ -4,7 +4,7 @@
   "description": "tailwind styled utility",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd src/solid && pnpm test"
   },
   "keywords": [
     "tailwind",
@@ -14,8 +14,5 @@
     "solidjs"
   ],
   "author": "illia.chaban.8@gmail.com",
-  "license": "MIT",
-  "dependencies": {
-    "solid-js": "^1.8.17"
-  }
+  "license": "MIT"
 }
