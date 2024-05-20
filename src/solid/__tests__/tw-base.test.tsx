@@ -1,5 +1,4 @@
-import { render, fireEvent } from "@solidjs/testing-library";
-// import { createTw } from "./tw";
+import { render } from "@solidjs/testing-library";
 import { createTw } from "../src";
 
 describe("tw", () => {
@@ -88,7 +87,16 @@ describe("tw", () => {
 
       const r2 = render(() => <Styled2 as="button">Hey</Styled2>);
       expect(r2.container.innerHTML).toBe(
-        `<button class="hello world hi there">Hey</button>`
+        `<button class="hi there">Hey</button>`
+      );
+
+      const Styled3 = tw(Styled1)`
+        another 
+        one
+      `;
+      const r3 = render(() => <Styled2 as={Styled3}>Third</Styled2>);
+      expect(r3.container.innerHTML).toBe(
+        `<div class="hello world another one hi there">Third</div>`
       );
     });
   });

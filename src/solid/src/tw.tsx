@@ -58,26 +58,14 @@ export const createTw = (cssMergeFunction: CssMergeFn = simpleJoinClasses) =>
             )
           );
 
-        const component = () => {
-          // preserve styles of the previous styled component
-          if (props.as && !isStyledComponent(Component)) return props.as;
-          return Component;
-        };
-
-        // omit propagating props to html elements that start with '$'
-        const keysToOmit = createMemo(() =>
-          typeof component() === "function"
-            ? []
-            : Object.keys(p2).filter((k) => k.startsWith("$"))
-        );
+        const component = () => props.as ?? Component;
 
         const otherProps = () => {
           const Component = component();
-          if (typeof Component === "function") {
-            if (!isStyledComponent(Component)) return p2;
-            return mergeProps(p2, { as: props.as });
-          }
-          return splitProps(p2, keysToOmit())[1];
+          if (typeof Component === "function") return p2;
+          // avoid propagating $<key> to html elements
+          const keys = Object.keys(p2).filter((k) => !k.startsWith("$"));
+          return pick(p2, keys);
         };
 
         return (
@@ -129,10 +117,17 @@ const templateToOneLine = (templateStr: string): string => {
 const pick = <R extends Record<string, unknown>, P extends keyof R>(
   obj: R,
   keys: P[]
-): { [Key in P]: R[Key] } => {
+): Pick<R, P> => {
   const picked = {} as any;
   keys.forEach((k) => (picked[k] = obj[k]));
   return picked;
+};
+const omit = <R extends Record<string, unknown>, P extends keyof R>(
+  obj: R,
+  keys: P[]
+): Omit<R, P> => {
+  const pickKeys = Object.keys(obj).filter((k) => !keys.includes(k as any));
+  return pick(obj, pickKeys) as any;
 };
 
 type Falsy = false | null | undefined | 0 | "";
