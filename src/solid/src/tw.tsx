@@ -158,7 +158,7 @@ const isStyledComponent = <T extends {}>(
   return typeof Component === "function" && "_tag" in Component;
 };
 
-type Tw = {
+export type Tw = {
   <K extends keyof JSX.IntrinsicElements>(component: K): TagFn<
     JSX.IntrinsicElements[K]
   >;
