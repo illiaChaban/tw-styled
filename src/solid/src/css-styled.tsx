@@ -1,8 +1,6 @@
-/** @jsxImportSource solid-js */
 import { splitProps } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import { Dynamic } from "solid-js/web";
-// import { twMerge } from 'tailwind-merge'
 
 /**
  * 

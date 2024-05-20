@@ -1,11 +1,8 @@
 {
-  "name": "ts-jest-template-solid",
-  "version": "0.0.0",
-  "description": "",
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "tsc --project tsconfig.build.json",
+    "build": "rm -rf ./dist && tsc",
     "serve": "vite preview",
     "test": "jest"
   },
@@ -15,7 +12,6 @@
       "<rootDir>/node_modules/@testing-library/jest-dom"
     ]
   },
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.8",
@@ -43,5 +39,24 @@
   },
   "dependencies": {
     "solid-js": "^1.8.11"
-  }
+  },
+  "name": "@illlia/solid-css-styled",
+  "version": "0.0.3",
+  "description": "css styled utility for css utility frameworks like tailwind",
+  "keywords": [
+    "tailwind",
+    "styled",
+    "tw",
+    "styled-components",
+    "solidjs"
+  ],
+  "author": "illia.chaban.8@gmail.com",
+  "license": "MIT",
+  "files": [
+    "dist/**",
+    "package.json",
+    "tsconfig.json"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
 }
