@@ -1,10 +1,10 @@
 {
-  "name": "css-styled",
+  "name": "@illlia/css-styled",
   "version": "0.0.1",
   "description": "css styled utility for css utility frameworks like tailwind",
-  "main": "src/index.ts",
   "scripts": {
-    "test": "cd src/solid && pnpm test"
+    "test": "cd src/solid && pnpm test",
+    "build": "rm -rf ./dist && cd src/solid && pnpm build"
   },
   "keywords": [
     "tailwind",
@@ -14,5 +14,14 @@
     "solidjs"
   ],
   "author": "illia.chaban.8@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    "./solid": {
+      "import": "./dist/solid/index.js",
+      "types": "./dist/solid/index.d.ts"
+    }
+  }
 }
