@@ -1,4 +1,5 @@
-import { createMemo, mergeProps, splitProps } from "solid-js";
+/** @jsxImportSource solid-js */
+import { splitProps } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import { Dynamic } from "solid-js/web";
 // import { twMerge } from 'tailwind-merge'
@@ -67,6 +68,7 @@ export const createCssStyled = (
           if (typeof Component === "function") return p2;
           // avoid propagating $<key> to html elements
           const keys = Object.keys(p2).filter((k) => !k.startsWith("$"));
+          // should i use split props here? Is there a performance optimization opportunity?
           return pick(p2, keys);
         };
 
@@ -74,10 +76,9 @@ export const createCssStyled = (
           <Dynamic component={component()} class={final()} {...otherProps()} />
         );
       };
-      Styled._tag = "tw-styled";
       return Styled;
     };
-  }) as Tw;
+  }) as StyleFn;
 
 const isTemplateStringArr = (v: any): v is TemplateStringsArray =>
   !!v.raw && Array.isArray(v);
@@ -138,16 +139,13 @@ type TagFn<BaseProps extends {}> = <ExtraProps extends {} = {}>(
   ...args: TagArg<ExtraProps>[]
 ) => StyledComponent<BaseProps, ExtraProps>;
 
-type StyledComponent<BaseProps extends {}, ExtraProps extends {} = {}> = {
-  (
-    // TODO: support conditional props based on "as" internal prop.
-    // i.e. "as" component function accepts certtain props that become "BaseProps"
-    props: BaseProps & ExtraProps & InternalProps
-  ): JSX.Element;
-  _tag: "tw-styled";
-};
+type StyledComponent<BaseProps extends {}, ExtraProps extends {} = {}> = (
+  // TODO: support conditional props based on "as" internal prop.
+  // i.e. "as" component function accepts certtain props that become "BaseProps"
+  props: BaseProps & ExtraProps & InternalProps
+) => JSX.Element;
 
-export type Tw = {
+export type StyleFn = {
   <K extends keyof JSX.IntrinsicElements>(component: K): TagFn<
     JSX.IntrinsicElements[K]
   >;
