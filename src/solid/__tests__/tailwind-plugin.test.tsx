@@ -9,6 +9,7 @@ import {
 import { isEmpty } from "@illlia/ts-utils";
 import { StyleFn, createCssStyled } from "../src";
 import { render } from "@solidjs/testing-library";
+import { describe, it, expect } from "vitest";
 
 describe("tw with css-merge", () => {
   let cssMergeConfig: CompressedConfig;

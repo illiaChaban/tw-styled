@@ -1,4 +1,7 @@
 {
+  "include": [
+    "src/**/*",
+  ],
   "compilerOptions": {
     "outDir": "./dist",
     "target": "ESNext",
@@ -16,7 +19,4 @@
     "skipLibCheck": true,
     "jsxImportSource": "solid-js"
   },
-  "include": [
-    "src"
-  ]
 }
