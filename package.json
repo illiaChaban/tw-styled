@@ -1,7 +1,7 @@
 {
-  "name": "tw-styled",
+  "name": "css-styled",
   "version": "0.0.1",
-  "description": "tailwind styled utility",
+  "description": "css styled utility for css utility frameworks like tailwind",
   "main": "src/index.ts",
   "scripts": {
     "test": "cd src/solid && pnpm test"

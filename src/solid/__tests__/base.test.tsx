@@ -1,12 +1,12 @@
 import { render } from "@solidjs/testing-library";
-import { createTw } from "../src";
+import { createCssStyled } from "../src";
 
 describe("tw", () => {
-  const tw = createTw();
+  const s = createCssStyled();
 
   describe("class joiner", () => {
     it("should cleanup class names", () => {
-      expect(tw`hi ${null}
+      expect(s`hi ${null}
             ${0} ${true && "there"}
         
           how are you
@@ -16,7 +16,7 @@ describe("tw", () => {
 
   describe("styled", () => {
     it("should render a styled component with applied class", () => {
-      const Styled = tw("div")`
+      const Styled = s("div")`
         hello world
       `;
       const { container, unmount } = render(() => <Styled />);
@@ -25,7 +25,7 @@ describe("tw", () => {
     });
 
     it("should render a styled component with applied class and children", () => {
-      const Styled = tw("div")`
+      const Styled = s("div")`
         hello world
       `;
       const { container, unmount } = render(() => <Styled>Hi there</Styled>);
@@ -36,7 +36,7 @@ describe("tw", () => {
     });
 
     it("should handle falsy values", () => {
-      const Styled = tw("div")`
+      const Styled = s("div")`
         hello world ${null} ${false} ${0}
         here
       `;
@@ -48,7 +48,7 @@ describe("tw", () => {
     });
 
     it("should support props & shouldn't propagate styling props to html elements", () => {
-      const Styled = tw("div")<{ $sayHello?: boolean }>`
+      const Styled = s("div")<{ $sayHello?: boolean }>`
         ${(p) => (p.$sayHello ? "hello" : "bye")} world
       `;
 
@@ -64,7 +64,7 @@ describe("tw", () => {
     });
 
     it('should support "as" prop', () => {
-      const Styled = tw("div")`
+      const Styled = s("div")`
         hello world
       `;
       const r = render(() => <Styled as="button">Hi</Styled>);
@@ -75,10 +75,10 @@ describe("tw", () => {
     });
 
     it("should be composable", () => {
-      const Styled1 = tw("div")`
+      const Styled1 = s("div")`
         hello world
       `;
-      const Styled2 = tw(Styled1)`hi there`;
+      const Styled2 = s(Styled1)`hi there`;
 
       const r1 = render(() => <Styled2>Hi</Styled2>);
       expect(r1.container.innerHTML).toBe(
@@ -90,7 +90,7 @@ describe("tw", () => {
         `<button class="hi there">Hey</button>`
       );
 
-      const Styled3 = tw(Styled1)`
+      const Styled3 = s(Styled1)`
         another 
         one
       `;

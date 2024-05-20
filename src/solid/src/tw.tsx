@@ -21,7 +21,9 @@ import { Dynamic } from "solid-js/web";
     ]
  */
 
-export const createTw = (cssMergeFunction: CssMergeFn = simpleJoinClasses) =>
+export const createCssStyled = (
+  cssMergeFunction: CssMergeFn = simpleJoinClasses
+) =>
   ((
     classesOrComponent:
       | keyof JSX.IntrinsicElements
@@ -122,13 +124,6 @@ const pick = <R extends Record<string, unknown>, P extends keyof R>(
   keys.forEach((k) => (picked[k] = obj[k]));
   return picked;
 };
-const omit = <R extends Record<string, unknown>, P extends keyof R>(
-  obj: R,
-  keys: P[]
-): Omit<R, P> => {
-  const pickKeys = Object.keys(obj).filter((k) => !keys.includes(k as any));
-  return pick(obj, pickKeys) as any;
-};
 
 type Falsy = false | null | undefined | 0 | "";
 
@@ -150,12 +145,6 @@ type StyledComponent<BaseProps extends {}, ExtraProps extends {} = {}> = {
     props: BaseProps & ExtraProps & InternalProps
   ): JSX.Element;
   _tag: "tw-styled";
-};
-
-const isStyledComponent = <T extends {}>(
-  Component: string | ((p: T) => JSX.Element)
-): Component is StyledComponent<T> => {
-  return typeof Component === "function" && "_tag" in Component;
 };
 
 export type Tw = {

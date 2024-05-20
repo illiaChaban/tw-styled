@@ -7,7 +7,7 @@ import {
   createCssMerge,
 } from "@illlia/css-merge";
 import { isEmpty } from "@illlia/ts-utils";
-import { Tw, createTw } from "../src";
+import { Tw, createCssStyled } from "../src";
 import { render } from "@solidjs/testing-library";
 
 describe("tw with css-merge", () => {
@@ -36,7 +36,7 @@ describe("tw with css-merge", () => {
 
   it("should create tw with merging logic", () => {
     const cssMerge = createCssMerge(cssMergeConfig);
-    tw = createTw((classes) => cssMerge(...classes));
+    tw = createCssStyled((classes) => cssMerge(...classes));
     expect(typeof tw).toBe("function");
   });
 
