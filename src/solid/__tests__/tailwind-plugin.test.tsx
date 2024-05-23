@@ -7,7 +7,7 @@ import {
   createCssMerge,
 } from "@illlia/css-merge";
 import { isEmpty } from "@illlia/ts-utils";
-import { StyleFn, createCssStyled } from "../src";
+import { StyleFn, createCssStyled } from "../src/css-styled";
 import { render } from "@solidjs/testing-library";
 import { describe, it, expect } from "vitest";
 

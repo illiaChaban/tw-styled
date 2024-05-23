@@ -1,5 +1,5 @@
 import { render } from "@solidjs/testing-library";
-import { createCssStyled } from "../src";
+import { createCssStyled } from "../src/css-styled";
 import { describe, it, expect } from "vitest";
 
 describe("tw", () => {
