@@ -1,6 +1,7 @@
-import { splitProps } from "solid-js";
+import { ComponentProps, splitProps } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import { Dynamic } from "solid-js/web";
+import { Falsy, CssMergeFn, simpleJoinClasses } from "../../shared";
 
 /**
  * 
@@ -49,7 +50,7 @@ export const createCssStyled = (
           : preprocessArg(args[i]),
       ]);
 
-      const Styled: StyledComponent<any> = (props) => {
+      const Styled: StyledComponent<any> = (props: any) => {
         const [, p2] = splitProps(props, ["class", "as"]);
 
         const final = () =>
@@ -76,7 +77,7 @@ export const createCssStyled = (
       };
       return Styled;
     };
-  }) as StyleFn;
+  }) as StyleFn2;
 
 const isTemplateStringArr = (v: any): v is TemplateStringsArray =>
   !!v.raw && Array.isArray(v);
@@ -124,24 +125,21 @@ const pick = <R extends Record<string, unknown>, P extends keyof R>(
   return picked;
 };
 
-type Falsy = false | null | undefined | 0 | "";
-
 type TagArg<P> = string | Falsy | ((props: P) => string | Falsy);
 
-type InternalProps = {
-  as?: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element);
-};
+type Component = keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element);
 
 type TagFn<BaseProps extends {}> = <ExtraProps extends {} = {}>(
   classes: TemplateStringsArray,
   ...args: TagArg<ExtraProps>[]
 ) => StyledComponent<BaseProps, ExtraProps>;
 
-type StyledComponent<BaseProps extends {}, ExtraProps extends {} = {}> = (
-  // TODO: support conditional props based on "as" internal prop.
-  // i.e. "as" component function accepts certtain props that become "BaseProps"
-  props: BaseProps & ExtraProps & InternalProps
-) => JSX.Element;
+type StyledComponent<BaseProps extends {}, ExtraProps extends {} = {}> = {
+  <As extends Component>(
+    props: { as: As } & ComponentProps<As> & ExtraProps
+  ): JSX.Element;
+  (props: BaseProps & ExtraProps): JSX.Element;
+};
 
 export type StyleFn = {
   <K extends keyof JSX.IntrinsicElements>(component: K): TagFn<
@@ -155,7 +153,16 @@ export type StyleFn = {
   ): string;
 };
 
-type CssMergeFn = (maybeClasses: (string | Falsy)[]) => string;
-
-const simpleJoinClasses: CssMergeFn = (classes) =>
-  classes.filter(Boolean).join(" ");
+export type StyleFn2 = {
+  // <K extends keyof JSX.IntrinsicElements>(component: K): TagFn<
+  //   JSX.IntrinsicElements[K]
+  // >;
+  <P extends { class?: string }>(component: (p: P) => JSX.Element): TagFn<P>;
+  // return css class, use for autocomplete purposes
+  (
+    styles: TemplateStringsArray,
+    ...args: (string | number | false | null | undefined)[]
+  ): string;
+} & {
+  [K in keyof JSX.IntrinsicElements]: TagFn<JSX.IntrinsicElements[K]>;
+};
