@@ -1,4 +1,6 @@
-export * from "./css-styled";
+export * from "./style-fn";
+export * from "./styled";
+export * from "../../shared/merge-classes";
 
 /**
  * 

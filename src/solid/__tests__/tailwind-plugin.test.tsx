@@ -7,7 +7,7 @@ import {
   createCssMerge,
 } from "@illlia/css-merge";
 import { isEmpty } from "@illlia/ts-utils";
-import { StyleFn, createCssStyled } from "../src/css-styled";
+import { StyleFn, createStyleFn } from "../src";
 import { render } from "@solidjs/testing-library";
 import { describe, it, expect } from "vitest";
 
@@ -37,7 +37,7 @@ describe("tw with css-merge", () => {
 
   it("should create tw with merging logic", () => {
     const cssMerge = createCssMerge(cssMergeConfig);
-    tw = createCssStyled((classes) => cssMerge(...classes));
+    tw = createStyleFn((classes) => cssMerge(...classes));
     expect(typeof tw).toBe("function");
   });
 
@@ -48,7 +48,7 @@ describe("tw with css-merge", () => {
   });
 
   it("should merge classes with styled", () => {
-    const Styled = tw("div")`
+    const Styled = tw.div`
       px-2 py-4
     `;
     const r = render(() => <Styled class="pb-1">Hi</Styled>);
@@ -59,7 +59,7 @@ describe("tw with css-merge", () => {
   });
 
   it("should compose classes with styled", () => {
-    const S1 = tw("span")`
+    const S1 = tw.span`
       p-2 px-3
       mx-3
     `;

@@ -8,7 +8,7 @@ import {
 } from "../../shared";
 import { WithStyles, createStyled } from "./styled";
 
-type StyleFn = {
+export type StyleFn = {
   <P extends { class?: string }>(
     component: (p: P) => JSX.Element
   ): WithStyles<P>;
@@ -36,7 +36,6 @@ export const createStyleFn = (
     get(_, name: keyof JSX.IntrinsicElements) {
       return styled(name);
     },
-    apply(target, thisArg, args) {},
   }) as StyleFn;
 };
 

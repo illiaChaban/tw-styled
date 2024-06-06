@@ -1,9 +1,9 @@
 import { render } from "@solidjs/testing-library";
-import { createCssStyled } from "../src/css-styled";
+import { createStyleFn } from "../src";
 import { describe, it, expect } from "vitest";
 
 describe("tw", () => {
-  const s = createCssStyled();
+  const s = createStyleFn();
 
   describe("class joiner", () => {
     it("should cleanup class names", () => {
@@ -17,7 +17,7 @@ describe("tw", () => {
 
   describe("styled", () => {
     it("should render a styled component with applied class", () => {
-      const Styled = s("div")`
+      const Styled = s.div`
         hello world
       `;
       const { container, unmount } = render(() => <Styled />);
@@ -26,7 +26,7 @@ describe("tw", () => {
     });
 
     it("should render a styled component with applied class and children", () => {
-      const Styled = s("div")`
+      const Styled = s.div`
         hello world
       `;
       const { container, unmount } = render(() => <Styled>Hi there</Styled>);
@@ -37,7 +37,7 @@ describe("tw", () => {
     });
 
     it("should handle falsy values", () => {
-      const Styled = s("div")`
+      const Styled = s.div`
         hello world ${null} ${false} ${0}
         here
       `;
@@ -49,7 +49,7 @@ describe("tw", () => {
     });
 
     it("should support props & shouldn't propagate styling props to html elements", () => {
-      const Styled = s("div")<{ $sayHello?: boolean }>`
+      const Styled = s.div<{ $sayHello?: boolean }>`
         ${(p) => (p.$sayHello ? "hello" : "bye")} world
       `;
 
@@ -65,7 +65,7 @@ describe("tw", () => {
     });
 
     it('should support "as" prop', () => {
-      const Styled = s("div")`
+      const Styled = s.div`
         hello world
       `;
       const r = render(() => <Styled as="button">Hi</Styled>);
@@ -76,7 +76,7 @@ describe("tw", () => {
     });
 
     it("should be composable", () => {
-      const Styled1 = s("div")`
+      const Styled1 = s.div`
         hello world
       `;
       const Styled2 = s(Styled1)`hi there`;

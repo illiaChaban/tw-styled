@@ -1,6 +1,6 @@
 {
   "name": "@illlia/css-styled",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "css styled utility for css utility frameworks like tailwind",
   "scripts": {
     "test": "cd src/solid && pnpm test",
@@ -20,8 +20,14 @@
   ],
   "exports": {
     "./solid": {
-      "import": "./dist/solid/index.js",
-      "types": "./dist/solid/index.d.ts"
+      "import": {
+        "types": "./dist/solid/src/index.d.ts",
+        "default": "./dist/solid/src/index.jsx"
+      },
+      "require": {
+        "types": "./dist/solid/src/index.d.ts",
+        "default": "./dist/solid/src/index.jsx"
+      }
     }
   }
 }

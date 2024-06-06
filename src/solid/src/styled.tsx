@@ -22,18 +22,8 @@ export const createStyled = (
   cssMergeFunction: CssMergeFn = simpleJoinClasses
 ): Styled => {
   return (Component: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element)) =>
-    (
-      first: TemplateStringsArray | StyledArg<any>,
-      ...args: StyledArg<any>[]
-    ) => {
-      const preprocessedValues = isTemplateStringArr(first)
-        ? first.flatMap((str, i) => [
-            templateToOneLine(str),
-            i === first.length - 1
-              ? (props: any) => props.class
-              : preprocessArg(args[i]),
-          ])
-        : [first, ...args];
+    (...args: Styles) => {
+      const preprocessedValues = preprocessArgs(args);
 
       const Styled: StyledComponent<any> = (props: any) => {
         const [, p2] = splitProps(props, ["class", "as"]);
@@ -64,18 +54,34 @@ export const createStyled = (
     };
 };
 
+type Styles = [TemplateStringsArray | StyledArg<any>, ...StyledArg<any>[]];
+type PreprocessedArgs = StyledArg<any>[];
+type ProcessedArgs = (string | Falsy)[];
+
+const preprocessArgs = (args: Styles): PreprocessedArgs => {
+  const [first, ...others] = args;
+  return isTemplateStringArr(first)
+    ? first.flatMap((str, i) => [
+        templateToOneLine(str),
+        i === first.length - 1
+          ? (props: any) => props.class
+          : preprocessArg(others[i]),
+      ])
+    : (args as StyledArg<any>[]);
+};
+
 const preprocessArg = (
   arg: StyledArg<any>
 ): string | ((props: any) => string | Falsy) =>
-  typeof arg === "string"
+  !!arg === false
+    ? ""
+    : typeof arg === "string"
     ? templateToOneLine(arg)
     : typeof arg === "function"
     ? (props: any) => {
         const v = arg(props);
         return v && templateToOneLine(v);
       }
-    : !!arg === false
-    ? ""
     : (() => {
         throw `Unsupported type: ${typeof arg}`;
       })();
