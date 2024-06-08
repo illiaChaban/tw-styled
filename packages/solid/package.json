@@ -7,7 +7,7 @@
   "types": "dist/solid/src/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@illlia/css-merge": "^0.0.2",
