@@ -4,7 +4,7 @@ import {
   CssMergeFn,
   StyledArg,
   Styles,
-  omitKeys,
+  pick,
   preprocessArgs,
   simpleJoinClasses,
 } from "../../shared";
@@ -40,8 +40,9 @@ export const createStyled = (
         const otherProps = () => {
           if (typeof component() === "function") return p2;
           // avoid propagating $<key> to html elements
-          // TODO: should i use split props here? Is there a performance optimization opportunity?
-          return omitKeys(p2, [(k) => k.startsWith("$")]);
+          const keys = Object.keys(p2).filter((k) => !k.startsWith("$"));
+          // should i use split props here? Is there a performance optimization opportunity?
+          return pick(p2, keys);
         };
 
         return (

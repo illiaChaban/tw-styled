@@ -39,7 +39,7 @@ export const createStyled = (
         const otherProps = () => {
           if (typeof Component === "function") return others;
           // avoid propagating $<key> to html elements
-          return omitKeys(others, [(v) => v.startsWith("$")]);
+          return omitKeys(others, [(k) => k.startsWith("$")]);
         };
 
         return <Component {...otherProps()} className={final} />;
