@@ -1,5 +1,4 @@
-import { ComponentProps, JSX, splitProps } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import React, { ComponentProps, JSX } from "react";
 import {
   CssMergeFn,
   StyledArg,
@@ -13,7 +12,7 @@ export type Styled = {
   <K extends keyof JSX.IntrinsicElements>(component: K): WithStyles<
     JSX.IntrinsicElements[K]
   >;
-  <P extends { class?: string }>(
+  <P extends { className?: string }>(
     component: (p: P) => JSX.Element
   ): WithStyles<P>;
 };
@@ -21,32 +20,29 @@ export type Styled = {
 export const createStyled = (
   cssMergeFunction: CssMergeFn = simpleJoinClasses
 ): Styled => {
-  return (Component: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element)) =>
+  return (_Component: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element)) =>
     (...args: Styles) => {
-      const preprocessedValues = preprocessArgs("class")(args);
+      const preprocessedValues = preprocessArgs("className")(args);
 
+      // TODO: does it need forwardRef ?
       const Styled: StyledComponent<any> = (props: any) => {
-        const [, p2] = splitProps(props, ["class", "as"]);
+        const { as, className, ...others } = props;
 
-        const final = () =>
-          cssMergeFunction(
-            preprocessedValues.map((v) =>
-              typeof v === "function" ? v(props) : v
-            )
-          );
+        const final = cssMergeFunction(
+          preprocessedValues.map((v) =>
+            typeof v === "function" ? v(props) : v
+          )
+        );
 
-        const component = () => props.as ?? Component;
+        const Component = as ?? _Component;
 
         const otherProps = () => {
-          if (typeof component() === "function") return p2;
+          if (typeof Component === "function") return others;
           // avoid propagating $<key> to html elements
-          // TODO: should i use split props here? Is there a performance optimization opportunity?
-          return omitKeys(p2, [(k) => k.startsWith("$")]);
+          return omitKeys(others, [(v) => v.startsWith("$")]);
         };
 
-        return (
-          <Dynamic component={component()} class={final()} {...otherProps()} />
-        );
+        return <Component {...otherProps()} className={final} />;
       };
       return Styled;
     };

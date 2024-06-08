@@ -4,7 +4,7 @@
   "description": "css styled utility for css utility frameworks like tailwind",
   "scripts": {
     "test": "cd src/solid && pnpm test",
-    "build": "rm -rf ./dist && cd src/solid && pnpm build"
+    "build": "rm -rf ./dist && cd src/solid && npx vitest run && pnpm build && cd ../react && npx vitest run && npm run build"
   },
   "keywords": [
     "tailwind",

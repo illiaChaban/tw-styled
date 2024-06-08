@@ -6,7 +6,7 @@
   "main": "dist/solid/src/index.jsx",
   "types": "dist/solid/src/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./dist && tsc",
+    "build": "tsc",
     "test": "vitest"
   },
   "devDependencies": {

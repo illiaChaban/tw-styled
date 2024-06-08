@@ -44,18 +44,23 @@ export const pick = <R extends Record<string, unknown>, P extends keyof R>(
 //   return pickBy(obj, (...args) => !fn(...args))
 // }
 
-// export const omitKeys = <R extends Record<string, unknown>>(
-//   obj: R,
-//   fn: (key: keyof R) => boolean
-// ): R => {
-//   const newObj = {} as R;
-//   Object.keys(obj)
-//     .filter((v) => !fn(v))
-//     .forEach((key: keyof R) => {
-//       newObj[key] = obj[key];
-//     });
-//   return newObj;
-// };
+export type KeyToOmit<
+  R extends Record<string, unknown> = Record<string, unknown>
+> = keyof R | ((k: string) => boolean);
+export const omitKeys = <R extends Record<string, unknown>>(
+  obj: R,
+  keys: KeyToOmit<R>[]
+): R => {
+  const newObj = {} as R;
+  const predicate = (value: string) =>
+    keys.every((k) => (typeof k === "function" ? !k(value) : value !== k));
+  Object.keys(obj)
+    .filter(predicate)
+    .forEach((key: keyof R) => {
+      newObj[key] = obj[key];
+    });
+  return newObj;
+};
 
 export const isTemplateStringArr = (v: any): v is TemplateStringsArray =>
   Array.isArray(v) && !!(v as any).raw;
