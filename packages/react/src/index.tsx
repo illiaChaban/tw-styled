@@ -1,6 +1,7 @@
 export * from "./style-fn";
 export * from "./styled";
 export * from "../../shared/merge-classes";
+export * from "./with-style";
 
 /**
  * 
