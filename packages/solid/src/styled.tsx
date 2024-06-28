@@ -4,7 +4,6 @@ import {
   CssMergeFn,
   StyledArg,
   Styles,
-  pick,
   preprocessArgs,
   simpleJoinClasses,
 } from "../../shared";
