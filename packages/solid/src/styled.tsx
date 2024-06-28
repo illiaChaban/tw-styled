@@ -41,8 +41,8 @@ export const createStyled = (
           if (typeof component() === "function") return p2;
           // avoid propagating $<key> to html elements
           const keys = Object.keys(p2).filter((k) => !k.startsWith("$"));
-          // should i use split props here? Is there a performance optimization opportunity?
-          return pick(p2, keys);
+          // using splitProps here instead of pick(...), bc it causes hydration to break for solid start
+          return splitProps(p2, keys)[0];
         };
 
         return (
