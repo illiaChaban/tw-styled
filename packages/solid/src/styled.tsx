@@ -39,10 +39,11 @@ export const createStyled = (
 
         const otherProps = () => {
           if (typeof component() === "function") return p2;
-          // avoid propagating $<key> to html elements
-          const keys = Object.keys(p2).filter((k) => !k.startsWith("$"));
-          // using splitProps here instead of pick(...), bc it causes hydration to break for solid start
-          return splitProps(p2, keys)[0];
+          // avoid passing $<key> to html elements
+          const toOmit = Object.keys(p2).filter((k) => k.startsWith("$"));
+          if (!toOmit.length) return p2;
+          // using splitProps here instead of pick/omit, bc it causes hydration to break for solid start
+          return splitProps(p2, toOmit)[1];
         };
 
         return (
