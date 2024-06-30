@@ -1,7 +1,6 @@
 import React, { ComponentProps, JSX } from "react";
 import {
   CssMergeFn,
-  StyledArg,
   Styles,
   omitKeys,
   preprocessArgs,
@@ -22,17 +21,18 @@ export const createStyled = (
 ): Styled => {
   return (_Component: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element)) =>
     (...args: Styles) => {
-      const preprocessedValues = preprocessArgs("className")(args);
+      const preprocessedValues = preprocessArgs(args);
 
       // TODO: does it need forwardRef ?
       const Styled: StyledComponent<any> = (props: any) => {
         const { as, className, ...others } = props;
 
-        const final = cssMergeFunction(
-          preprocessedValues.map((v) =>
+        const final = cssMergeFunction([
+          ...preprocessedValues.map((v) =>
             typeof v === "function" ? v(props) : v
-          )
-        );
+          ),
+          props.className,
+        ]);
 
         const Component = as ?? _Component;
 
@@ -49,8 +49,7 @@ export const createStyled = (
 };
 
 export type WithStyles<BaseProps extends {}> = <ExtraProps extends {} = {}>(
-  classes: TemplateStringsArray | StyledArg<ExtraProps>,
-  ...args: StyledArg<ExtraProps>[]
+  ...args: Styles<ExtraProps>
 ) => StyledComponent<BaseProps, ExtraProps>;
 
 export type Component = keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element);

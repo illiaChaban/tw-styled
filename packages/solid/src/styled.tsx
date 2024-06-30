@@ -2,7 +2,6 @@ import { ComponentProps, JSX, splitProps } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import {
   CssMergeFn,
-  StyledArg,
   Styles,
   preprocessArgs,
   simpleJoinClasses,
@@ -22,17 +21,18 @@ export const createStyled = (
 ): Styled => {
   return (Component: keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element)) =>
     (...args: Styles) => {
-      const preprocessedValues = preprocessArgs("class")(args);
+      const preprocessedValues = preprocessArgs(args);
 
       const Styled: StyledComponent<any> = (props: any) => {
         const [, p2] = splitProps(props, ["class", "as"]);
 
         const final = () =>
-          cssMergeFunction(
-            preprocessedValues.map((v) =>
+          cssMergeFunction([
+            ...preprocessedValues.map((v) =>
               typeof v === "function" ? v(props) : v
-            )
-          );
+            ),
+            props.class,
+          ]);
 
         const component = () => props.as ?? Component;
 
@@ -54,8 +54,7 @@ export const createStyled = (
 };
 
 export type WithStyles<BaseProps extends {}> = <ExtraProps extends {} = {}>(
-  classes: TemplateStringsArray | StyledArg<ExtraProps>,
-  ...args: StyledArg<ExtraProps>[]
+  ...args: Styles<ExtraProps>
 ) => StyledComponent<BaseProps, ExtraProps>;
 
 export type Component = keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element);

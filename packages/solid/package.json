@@ -1,6 +1,6 @@
 {
   "name": "@illlia/solid-css-styled",
-  "version": "0.0.13",
+  "version": "1.0.0",
   "description": "css styled utility for css utility frameworks like tailwind",
   "author": "illia.chaban.8@gmail.com",
   "main": "dist/solid/src/index.jsx",

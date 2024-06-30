@@ -1,38 +1,35 @@
 import { Falsy, isTemplateStringArr, templateToOneLine } from "./utils";
 
-export type StyledArg<P> = string | Falsy | ((props: P) => string | Falsy);
-export type Styles = [
-  TemplateStringsArray | StyledArg<any>,
-  ...StyledArg<any>[]
-];
-type PreprocessedArgs = StyledArg<any>[];
-// type ProcessedArgs = (string | Falsy)[];
+type StyledArg<P, Arg> = Arg | Falsy | ((props: P) => Arg | Falsy);
+export type Styles<Props = any> =
+  // only strings as arguments since number is not a valid css class
+  | StyledArg<Props, string>[]
+  | [TemplateStringsArray, ...StyledArg<Props, string | number>[]];
+type PreprocessedArgs = StyledArg<any, string>[];
 
-export const preprocessArgs =
-  (classNameKey: string) =>
-  (args: Styles): PreprocessedArgs => {
-    const [first, ...others] = args;
-    return isTemplateStringArr(first)
-      ? first.flatMap((str, i) => [
-          templateToOneLine(str),
-          i === first.length - 1
-            ? (props: any) => props[classNameKey]
-            : preprocessArg(others[i]),
-        ])
-      : (args as StyledArg<any>[]);
-  };
+export const preprocessArgs = (args: Styles): PreprocessedArgs => {
+  return isTemplateStringArr(args[0])
+    ? args[0].flatMap((str, i) => [
+        templateToOneLine(str),
+        preprocessArg(args[i + 1] as StyledArg<any, string | number>),
+      ])
+    : (args as StyledArg<any, string>[]);
+};
 
 const preprocessArg = (
-  arg: StyledArg<any>
-): string | ((props: any) => string | Falsy) =>
+  arg: StyledArg<any, string | number>
+): string | ((props: any) => string) =>
   !!arg === false
     ? ""
     : typeof arg === "string"
     ? templateToOneLine(arg)
+    : typeof arg === "number"
+    ? arg.toString()
     : typeof arg === "function"
     ? (props: any) => {
         const v = arg(props);
-        return v && templateToOneLine(v);
+        if (typeof v === "function") throw `Can't have another function`;
+        return preprocessArg(v) as string;
       }
     : (() => {
         throw `Unsupported type: ${typeof arg}`;

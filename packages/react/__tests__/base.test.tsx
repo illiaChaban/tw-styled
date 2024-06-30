@@ -102,4 +102,51 @@ describe("tw", () => {
       );
     });
   });
+
+  it("should support multiple styles to compose classes", () => {
+    const Button = s.button<{ $size?: "sm" }>`
+      ${(p) => p.$size === "sm" && "text-sm"}
+      font-bold
+    `;
+    expect(innerHtml(<Button>Hello</Button>)).toBe(
+      `<button class="font-bold">Hello</button>`
+    );
+    expect(innerHtml(<Button className="test">Hello</Button>)).toBe(
+      `<button class="font-bold test">Hello</button>`
+    );
+    expect(innerHtml(<Button $size="sm">Hello</Button>)).toBe(
+      `<button class="text-sm font-bold">Hello</button>`
+    );
+    expect(
+      innerHtml(
+        <Button $size="sm" className="test">
+          Hello
+        </Button>
+      )
+    ).toBe(`<button class="text-sm font-bold test">Hello</button>`);
+
+    const Button2 = s.button<{ $size?: "sm" }>(
+      (p) => p.$size === "sm" && "text-sm",
+      "font-bold"
+    );
+    expect(innerHtml(<Button2>Hello</Button2>)).toBe(
+      `<button class="font-bold">Hello</button>`
+    );
+    expect(innerHtml(<Button2 className="test">Hello</Button2>)).toBe(
+      `<button class="font-bold test">Hello</button>`
+    );
+    expect(innerHtml(<Button2 $size="sm">Hello</Button2>)).toBe(
+      `<button class="text-sm font-bold">Hello</button>`
+    );
+    expect(
+      innerHtml(
+        <Button2 $size="sm" className="test">
+          Hello
+        </Button2>
+      )
+    ).toBe(`<button class="text-sm font-bold test">Hello</button>`);
+  });
 });
+
+const innerHtml = (...args: Parameters<typeof render>): string =>
+  render(...args).container.innerHTML;
