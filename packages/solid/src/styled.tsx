@@ -57,14 +57,15 @@ export type WithStyles<BaseProps extends {}> = <ExtraProps extends {} = {}>(
   ...args: Styles<ExtraProps>
 ) => StyledComponent<BaseProps, ExtraProps>;
 
-export type Component = keyof JSX.IntrinsicElements | ((p: {}) => JSX.Element);
-
 export type StyledComponent<
   BaseProps extends {},
   ExtraProps extends {} = {}
 > = {
-  <As extends Component>(
-    props: { as: As } & ComponentProps<As> & ExtraProps
+  <P extends {}>(
+    props: { as: (p: P) => JSX.Element } & P & ExtraProps
+  ): JSX.Element;
+  <As extends keyof JSX.IntrinsicElements>(
+    props: { as: As } & JSX.IntrinsicElements[As] & ExtraProps
   ): JSX.Element;
   (props: BaseProps & ExtraProps): JSX.Element;
 };

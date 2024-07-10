@@ -74,6 +74,31 @@ describe("tw", () => {
       expect(r.container.innerHTML).toBe(
         `<button class="hello world">Hi</button>`
       );
+
+      const Other = ({
+        nodeRef,
+        ...p
+      }: Pick<JSX.IntrinsicElements["a"], "className" | "children"> & {
+        nodeRef?: (el: HTMLAnchorElement) => void;
+        // required
+        href: string;
+      }) => <a {...p} ref={nodeRef} />;
+
+      let ref: HTMLAnchorElement;
+      const r2 = render(
+        <Styled
+          as={Other}
+          className="other"
+          href="_href"
+          nodeRef={(el) => (ref = el!)}
+        >
+          Hi
+        </Styled>
+      );
+      expect(r2.container.innerHTML).toBe(
+        `<a href="_href" class="hello world other">Hi</a>`
+      );
+      expect(ref!.tagName).toBe("A");
     });
 
     it("should be composable", () => {

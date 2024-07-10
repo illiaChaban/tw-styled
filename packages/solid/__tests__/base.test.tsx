@@ -1,6 +1,7 @@
 import { render } from "@solidjs/testing-library";
 import { createStyleFn } from "../src";
 import { describe, it, expect } from "vitest";
+import { JSX } from "solid-js/jsx-runtime";
 
 describe("tw", () => {
   const s = createStyleFn();
@@ -73,6 +74,24 @@ describe("tw", () => {
       expect(r.container.innerHTML).toBe(
         `<button class="hello world">Hi</button>`
       );
+
+      const Other = (
+        p: Pick<JSX.HTMLElementTags["a"], "class" | "ref" | "children"> & {
+          // required
+          href: string;
+        }
+      ) => <a {...p} />;
+
+      let ref: HTMLAnchorElement;
+      const r2 = render(() => (
+        <Styled as={Other} class="other" href="_href" ref={(el) => (ref = el)}>
+          Hi
+        </Styled>
+      ));
+      expect(r2.container.innerHTML).toBe(
+        `<a class="hello world other" href="_href">Hi</a>`
+      );
+      expect(ref!.tagName).toBe("A");
     });
 
     it("should be composable", () => {
