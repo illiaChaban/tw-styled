@@ -3,7 +3,7 @@
   "version": "0.0.14",
   "description": "css styled utility for css utility frameworks like tailwind",
   "scripts": {
-    "test": "cd packages/solid && npm test && cd ../react && npm test",
+    "test": "cd packages/shared && npm test && cd ../solid && npm test && cd ../react && npm test",
     "build": "npm test && rm -rf ./dist && cd packages/solid && npm run build && cd ../react && npm run build"
   },
   "keywords": [
