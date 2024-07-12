@@ -23,6 +23,18 @@ export const templateToOneLine = (templateStr: string): string => {
   );
 };
 
+export const line = (
+  templateStrOrStr: TemplateStringsArray | string,
+  ...others: string[]
+) => {
+  if (typeof templateStrOrStr === "string")
+    return [templateStrOrStr, ...others].join(" ");
+  return templateStrOrStr
+    .flatMap((str, i) => [templateToOneLine(str), others[i]])
+    .filter(Boolean)
+    .join(" ");
+};
+
 export const pick = <R extends Record<string, unknown>, P extends keyof R>(
   obj: R,
   keys: P[]
