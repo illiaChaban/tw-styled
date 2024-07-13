@@ -24,15 +24,16 @@ export const templateToOneLine = (templateStr: string): string => {
 };
 
 export const line = (
-  templateStrOrStr: TemplateStringsArray | string,
-  ...others: string[]
+  templateStrOrStr: TemplateStringsArray | string | number | Falsy,
+  ...others: (string | number | Falsy)[]
 ) => {
-  if (typeof templateStrOrStr === "string")
-    return [templateStrOrStr, ...others].join(" ");
-  return templateStrOrStr
-    .flatMap((str, i) => [templateToOneLine(str), others[i]])
-    .filter(Boolean)
-    .join(" ");
+  if (Array.isArray(templateStrOrStr)) {
+    return templateStrOrStr
+      .flatMap((str, i) => [templateToOneLine(str), others[i]])
+      .filter(Boolean)
+      .join(" ");
+  }
+  return [templateStrOrStr, ...others].filter(Boolean).join(" ");
 };
 
 export const pick = <R extends Record<string, unknown>, P extends keyof R>(
