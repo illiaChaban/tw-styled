@@ -1,6 +1,6 @@
 {
   "name": "@illlia/css-styled",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "css styled utility for css utility frameworks like tailwind",
   "scripts": {
     "test": "cd packages/shared && npm test && cd ../solid && npm test && cd ../react && npm test",

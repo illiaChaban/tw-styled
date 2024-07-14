@@ -27,9 +27,26 @@ export const line = (
   templateStrOrStr: TemplateStringsArray | string | number | Falsy,
   ...others: (string | number | Falsy)[]
 ) => {
-  if (Array.isArray(templateStrOrStr)) {
-    return templateStrOrStr
-      .flatMap((str, i) => [templateToOneLine(str), others[i]])
+  if (isTemplateStringArr(templateStrOrStr)) {
+    const updated = [...templateStrOrStr];
+    updated[0] = updated[0].trimStart();
+    updated[updated.length - 1] = updated[updated.length - 1].trimEnd();
+    return updated
+      .flatMap((str, i) => [
+        str
+          .split("\n")
+          // only trim & replace with a space between new lines
+          .map((s, i, all) => {
+            if (all.length === 1) return s;
+            if (i === 0) return s.trimEnd();
+            if (i === all.length - 1) return s.trimStart();
+            return s.trim();
+          })
+          .filter((s) => s?.length)
+          .join(" "),
+        others[i],
+      ])
+
       .filter(Boolean)
       .join("");
   }

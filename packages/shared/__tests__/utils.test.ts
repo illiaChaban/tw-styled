@@ -12,4 +12,11 @@ describe(line.name, () => {
 
     expect(line("hi", "there")).toBe("hi there");
   });
+
+  it("should match complex case", () => {
+    const lined = line`translate(calc(${5}px - 50%), calc(${3}px + ${"50%"} ))`;
+    const noLine = `translate(calc(${5}px - 50%), calc(${3}px + ${"50%"} ))`;
+
+    expect(lined).toBe(noLine);
+  });
 });
