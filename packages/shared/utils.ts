@@ -31,7 +31,7 @@ export const line = (
     return templateStrOrStr
       .flatMap((str, i) => [templateToOneLine(str), others[i]])
       .filter(Boolean)
-      .join(" ");
+      .join("");
   }
   return [templateStrOrStr, ...others].filter(Boolean).join(" ");
 };
